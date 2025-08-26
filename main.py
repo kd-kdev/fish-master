@@ -1,3 +1,4 @@
+# Version of Fish Master written using Python + Rich
 import random
 import time
 from threading import Timer
@@ -5,36 +6,39 @@ import rich
 import curses
 from rich.console import Console
 from rich.panel import Panel
-from pick import pick
+
 
 console = Console()
 
-
 console.print(Panel.fit("Welcome to [bold blue]Fish Master[/bold blue], the CLI fishing game!"))
-
-title = 'Please select an option:'
-options = ['Start fishing','My fish', 'Shop', 'Help', 'Exit']
-option, index = pick(options, title , clear_screen=True)
+command = int(input("""
+Please enter a number:
+1. Start fishing
+2. My fish
+3. Shop
+4. Help
+5. Exit
+"""))
 
 
 ### Main menu
-def response(index):
-    match index:
-        case 0:
-            return fishingMinigame()
+def response(command):
+    match command:
         case 1:
-            return print("show my fish")
+            return fishingMinigame()
         case 2:
-            return print("Shop item 1 , 2 , 3 price")
+            return showFish()
         case 3:
-            return print("Instructions on how to play")
+            return showShop()
         case 4:
-            return print("exiting...")
-        
-        case _: # not needed since using pick doesn't allow you to choose wrong
-            return print("please enter a valid number!")
+            return showHelp()
+        case 5:
+            return exitGame()
+        case _:
+            return badInput()
 
-### Functions
+
+### Main game
 
 def fishGotAway():
     return print("the fish got away! :( ")
@@ -44,6 +48,7 @@ t = Timer(5, fishGotAway) # global timer for fish catch
 def fishingMinigame():
     randomTime = random.randint(2,10)
     
+
     for i in range(randomTime):
         time.sleep(1)
         print(f"{i+1} bobbing...")
@@ -58,4 +63,24 @@ def caughtFish():
     t.cancel()
     return print(f"Congrats you caught a fish!\nYou win!")
 
-response(index)
+
+# Response functions
+
+def showFish():
+    curses.endwin()
+    return print("a list of caught fish with ascii art")
+
+def showShop():
+    return print("a list of shop items w prices")
+
+def showHelp():
+    return print("instructions on how to play the game")
+
+def exitGame():
+    return print("exiting...")
+
+def badInput():
+    return print("please enter a valid number!")
+
+
+response(command)
