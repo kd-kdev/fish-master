@@ -1,35 +1,38 @@
 import random
 import time
 from threading import Timer
+import rich
+import curses
+from rich.console import Console
+from rich.panel import Panel
+from pick import pick
+
+console = Console()
 
 
-print("Welcome to FishMaster, the CLI fishing game!")
-print("Enter a number:")
+console.print(Panel.fit("Welcome to [bold blue]Fish Master[/bold blue], the CLI fishing game!"))
 
-command = int(input("""
-    1. Start fishing
-    2. My fish
-    3. Shop
-    4. Help
-    5. Exit      
-"""))
+title = 'Please select an option:'
+options = ['Start fishing','My fish', 'Shop', 'Help', 'Exit']
+option, index = pick(options, title , clear_screen=True)
+
 
 ### Main menu
-def response(command):
-    match command:
-        case 1:
+def response(index):
+    match index:
+        case 0:
             return fishingMinigame()
+        case 1:
+            return print("show my fish")
         case 2:
-            return "show my fish"
+            return print("Shop item 1 , 2 , 3 price")
         case 3:
-            return "Shop item 1 , 2 , 3 price"
+            return print("Instructions on how to play")
         case 4:
-            return "Instructions on how to play"
-        case 5:
-            return "exiting..."
+            return print("exiting...")
         
-        case _:
-            return "please enter a valid number!"
+        case _: # not needed since using pick doesn't allow you to choose wrong
+            return print("please enter a valid number!")
 
 ### Functions
 
@@ -55,4 +58,4 @@ def caughtFish():
     t.cancel()
     return print(f"Congrats you caught a fish!\nYou win!")
 
-response(command)
+response(index)
