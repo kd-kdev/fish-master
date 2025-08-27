@@ -10,8 +10,11 @@ from rich.panel import Panel
 
 console = Console()
 
-console.print(Panel.fit("Welcome to [bold blue]Fish Master[/bold blue], the CLI fishing game!"))
-command = int(input("""
+def welcome():
+    return console.print(Panel.fit("Welcome to [bold blue]Fish Master[/bold blue], the CLI fishing game!"))
+    
+def mainMenu():
+    command = int(input("""
 Please enter a number:
 1. Start fishing
 2. My fish
@@ -19,6 +22,7 @@ Please enter a number:
 4. Help
 5. Exit
 """))
+    response(command)
 
 
 ### Main menu
@@ -61,7 +65,9 @@ def fishingMinigame():
     
 def caughtFish():
     t.cancel()
-    return print(f"Congrats you caught a fish!\nYou win!")
+    print(f"Congrats you caught a fish!\nYou win!")
+    time.sleep(3)
+    return mainMenu()
 
 
 # Response functions
@@ -82,5 +88,10 @@ def exitGame():
 def badInput():
     return print("please enter a valid number!")
 
+# Main entry point
+def main():
+    welcome()
+    mainMenu()
 
-response(command)
+if __name__ == '__main__':
+	main()
