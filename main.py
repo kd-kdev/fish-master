@@ -1,6 +1,8 @@
 # Version of Fish Master written using Python + Rich
 import random
 import time
+import json
+from collections import Counter
 from threading import Timer
 import rich
 import curses
@@ -9,18 +11,23 @@ from rich.panel import Panel
 
 
 console = Console()
+#fishDictionary = {}
+
+listOfFish = []
+id = 1
 
 def welcome():
     return console.print(Panel.fit("Welcome to [bold blue]Fish Master[/bold blue], the CLI fishing game!"))
     
 def mainMenu():
-    command = int(input("""
-Please enter a number:
+    command = int(input("""Please enter a number:
 1. Start fishing
 2. My fish
 3. Shop
 4. Help
 5. Exit
+6. generateFish (TEST)
+7. printFishDict (TEST)
 """))
     response(command)
 
@@ -38,6 +45,10 @@ def response(command):
             return showHelp()
         case 5:
             return exitGame()
+        case 6:
+            return generateFish()
+        case 7:
+            return printFishDict()
         case _:
             return badInput()
 
@@ -70,10 +81,44 @@ def caughtFish():
     return mainMenu()
 
 
+def generateFish():
+    #generates a fish that is generated if user completes fishing minigame successfully
+    #should write to JSON file the generated fish
+
+    # NOTE: THIS SHOULD BE USING A LIST OF LISTS, NOT A DICTIONARY, wrong datatype
+    # NO, i CAN use a dictionary of dictionaries, i just don't know how to make each
+    # dictionary with a unique ID & NOT overwrite other dicts, every dictionary should
+    # be unique - ok this isn't exactly possible, since a dictionary CANNOT have
+    # duplicate keys, it will always overwrite - so either lists or database
+    # for my use case i could also just use SQLite or a DB
+    def newFish():
+
+        id = random.randint(1,300)
+        randomWeight = random.randint(5,20)
+        randomPrice = random.randint(1,50)
+
+        fishList = [id, "brown-nose", randomWeight, randomPrice]
+
+        return fishList
+
+    listOfFish.append(newFish())
+    time.sleep(1)
+    return mainMenu()
+
+def getAllFish():
+    #function to get all fish from a JSON file & display them
+    return 0
+
+# TEST METHOD
+def printFishDict():
+    #print(listOfFish)
+    print(*listOfFish, sep='\n') # will print the list vertically
+    print(len(listOfFish)) # print number of fish (lists within the list)
+    return mainMenu()
+
 # Response functions
 
 def showFish():
-    curses.endwin()
     return print("a list of caught fish with ascii art")
 
 def showShop():
@@ -86,7 +131,8 @@ def exitGame():
     return print("exiting...")
 
 def badInput():
-    return print("please enter a valid number!")
+    print("please enter a valid number!")
+    return mainMenu()
 
 # Main entry point
 def main():
