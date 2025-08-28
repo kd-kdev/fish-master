@@ -13,6 +13,8 @@ import pyinputplus as pyip
 # Globals
 console = Console()
 listOfFish = []
+playerMoney = 0
+TIME_UPPER_LIMIT = 15
 FISH_NAMES = {'Brown nose': 1,
               'Sand fin': 1.2,
               'Mudrunner': 1.5,
@@ -62,16 +64,15 @@ def fishGotAway():
     return mainMenu()
 
 
-
 def fishingMinigame():
-    randomTime = random.randint(1,8)
+    randomTime = random.randint(1, TIME_UPPER_LIMIT)
 
     for i in range(randomTime):
         time.sleep(1)
         print(f"{i+1} bobbing...")
 
     try:
-        pull = pyip.inputStr(prompt="fish caught!\ntype 'pull' to catch fish!\n", timeout=5, default="this is the default!", limit=2)
+        pull = pyip.inputStr(prompt="fish caught!\nyou have 5 seconds to type 'pull' to catch the fish!\n", timeout=5, default="this is the default!", limit=2)
         if pull == "pull":
             caughtFish()
         else:
@@ -79,20 +80,6 @@ def fishingMinigame():
     except pyip.TimeoutException:
         fishGotAway()
         
-
-        # input is a blocking call that halts execution until the user provides
-        # input & presses Enter
-        # if pull == "pull":
-        #     caughtFish()
-        # else:
-        #     print("you fiddle with your fishing rod...") 
-    
-#    return fishGotAway()
-
-# if you don't exit this function properly, it will just start going down the list &
-# executing everything else!
-
-
     
 def makeFish():
     randomName = random.choice(list(FISH_NAMES))
@@ -132,8 +119,86 @@ def showFish():
     print(f"Number of fish: {len(listOfFish)}")
     return mainMenu()
 
+def sellAllFish():
+    global playerMoney
+    if listOfFish:
+        totalSum = 0
+        for i in listOfFish:
+            #print(i)
+            #print(i[2])
+            totalSum = totalSum + i[2]
+            
+        playerMoney += totalSum
+        print(f"You sold {len(listOfFish)} fish for {playerMoney} gold!")
+    else:
+        print("No fish to sell!")
+
+# SHOP
+
 def showShop():
-    return print("a list of shop items w prices")
+
+        # Shop menu
+    def responseShop(commandShop):
+        match commandShop:
+            case 1:
+                return upgradeBait()
+            case 2:
+                return upgradeRod()
+            case 3:
+                return upgradeBoat()
+            case 4:
+                return sellAllFish()
+            case 5:
+                return mainMenu()
+            case _:
+                return badInput()
+
+    commandShop = int(input(f"""\nYou have {playerMoney} gold.\nPlease enter a number:
+1. Upgrade bait (100 gold)
+2. Upgrade rod (200 gold)
+3. Upgrade boat (500 gold)
+4. Sell all fish
+5. Exit shop
+"""))
+    responseShop(commandShop)
+
+
+def upgradeBait():
+    global TIME_UPPER_LIMIT
+    if playerMoney >= 100:
+        print("Bait upgraded!")
+        TIME_UPPER_LIMIT = TIME_UPPER_LIMIT - 1
+    else:
+        print("Not enough gold, sell more fish!\n")
+        showShop()
+    
+    time.sleep(1)
+    return mainMenu()
+
+def upgradeRod():
+    global TIME_UPPER_LIMIT
+    if playerMoney >= 200:
+        print("Rod upgraded!")
+        TIME_UPPER_LIMIT = TIME_UPPER_LIMIT - 2
+    else:
+        print("Not enough gold, sell more fish!\n")
+        showShop()
+
+    time.sleep(1)
+    return mainMenu()
+
+def upgradeBoat():
+    global TIME_UPPER_LIMIT
+    if playerMoney >= 500:
+        print("Boat upgraded!")
+        TIME_UPPER_LIMIT = TIME_UPPER_LIMIT - 6
+    else:
+        print("Not enough gold, sell more fish!\n")
+        showShop()
+    time.sleep(1)
+    return mainMenu()
+
+
 
 def showHelp():
     return print("instructions on how to play the game")
